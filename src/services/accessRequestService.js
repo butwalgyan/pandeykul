@@ -129,7 +129,7 @@ export async function approveAccessRequest(id, role) {
   const reviewedAt = new Date().toISOString();
   const reviewedBy = await getReviewedBy();
 
-  const { error: requestError } = await supabase
+  const { data: updatedRequest, error: requestError } = await supabase
     .from('access_requests')
     .update({
       status: 'approved',
@@ -138,9 +138,16 @@ export async function approveAccessRequest(id, role) {
       reviewed_at: reviewedAt,
     })
     .eq('id', id)
-    .eq('status', 'pending');
+    .eq('status', 'pending')
+    .select('id, status, approved_role')
+    .single();
 
-  if (requestError) {
+  if (
+    requestError
+    || !updatedRequest
+    || updatedRequest.status !== 'approved'
+    || updatedRequest.approved_role !== role
+  ) {
     throw toServiceError(requestError, 'Failed to approve access request.');
   }
 
@@ -159,7 +166,7 @@ export async function rejectAccessRequest(id, adminNote = null) {
   const note = adminNote?.trim() || null;
   const reviewedBy = await getReviewedBy();
 
-  const { error } = await supabase
+  const { data: updatedRequest, error } = await supabase
     .from('access_requests')
     .update({
       status: 'rejected',
@@ -168,9 +175,11 @@ export async function rejectAccessRequest(id, adminNote = null) {
       reviewed_at: new Date().toISOString(),
     })
     .eq('id', id)
-    .eq('status', 'pending');
+    .eq('status', 'pending')
+    .select('id, status')
+    .single();
 
-  if (error) {
+  if (error || !updatedRequest || updatedRequest.status !== 'rejected') {
     throw toServiceError(error, 'Failed to reject access request.');
   }
 
@@ -182,8 +191,19 @@ export const accessRequestService = {
   get: base.get,
   filter: base.filter,
 
-  async listPending(limit = 200) {
-    return base.filter({ status: 'pending' }, '-created_at', limit);
+  async listPending() {
+    const { data, error } = await supabase
+      .from('access_requests')
+      .select('*')
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('[access_requests] listPending failed:', error);
+      throw error;
+    }
+
+    return data || [];
   },
 
   submitRequest: submitAccessRequest,

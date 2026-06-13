@@ -100,10 +100,10 @@ export default function AdminAccessRequests() {
   const loadData = useCallback(async () => {
     const [u, pending] = await Promise.all([
       authService.me(),
-      accessRequestService.listPending(200).catch(() => []),
+      accessRequestService.listPending().catch(() => []),
     ]);
     setUser(u);
-    setRequests(pending);
+    setRequests(pending.filter(r => r.status === 'pending'));
     setRoleByRequest(prev => {
       const next = { ...prev };
       pending.forEach(r => {
@@ -127,7 +127,7 @@ export default function AdminAccessRequests() {
     try {
       const role = roleByRequest[request.id] || 'viewer';
       await accessRequestService.approveAccessRequest(request.id, role);
-      setRequests(previous => previous.filter(item => item.id !== request.id));
+      setRequests(prev => prev.filter(r => r.id !== request.id));
       toast.success('Access request approved successfully.');
     } catch (error) {
       console.error('[AdminAccessRequests] approve failed:', error);
@@ -142,7 +142,7 @@ export default function AdminAccessRequests() {
     setActing(request.id);
     try {
       await accessRequestService.rejectAccessRequest(request.id, request.admin_note);
-      setRequests(previous => previous.filter(item => item.id !== request.id));
+      setRequests(prev => prev.filter(r => r.id !== request.id));
       toast.success('Access request rejected successfully.');
     } catch (error) {
       console.error('[AdminAccessRequests] reject failed:', error);
