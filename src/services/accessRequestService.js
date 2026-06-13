@@ -45,9 +45,14 @@ function normalizeFormData(data) {
   };
 }
 
-async function getReviewedBy() {
+async function getAuthUserId() {
   const { data: { user } } = await supabase.auth.getUser();
-  return user?.email || user?.id || null;
+  return user?.id || null;
+}
+
+async function getReviewedByFields() {
+  const authUserId = await getAuthUserId();
+  return authUserId ? { reviewed_by: authUserId } : {};
 }
 
 function toServiceError(error, fallback) {
@@ -81,39 +86,20 @@ async function upsertUserProfile(request, role) {
   const email = request.email?.trim()?.toLowerCase();
   if (!email) throw new Error('Access request is missing email.');
 
-  const now = new Date().toISOString();
-  const profile = {
-    email,
-    full_name: request.full_name,
-    nepali_name: request.nepali_name || null,
-    role,
-    access_status: 'approved',
-    approved_at: now,
-    updated_at: now,
-  };
-
-  const { data: existing, error: lookupError } = await supabase
-    .from('user_profiles')
-    .select('id')
-    .eq('email', email)
-    .maybeSingle();
-
-  if (lookupError) throw toServiceError(lookupError, 'Failed to look up user profile.');
-
-  if (existing?.id) {
-    const { error } = await supabase
-      .from('user_profiles')
-      .update(profile)
-      .eq('id', existing.id);
-    if (error) throw toServiceError(error, 'Failed to update user profile.');
-    return existing.id;
-  }
-
   const { error } = await supabase
     .from('user_profiles')
-    .insert(profile);
+    .upsert(
+      {
+        email: request.email,
+        full_name: request.full_name,
+        role,
+        access_status: 'approved',
+        approved_at: new Date().toISOString(),
+      },
+      { onConflict: 'email' }
+    );
 
-  if (error) throw toServiceError(error, 'Failed to create user profile.');
+  if (error) throw toServiceError(error, 'Failed to upsert user profile.');
 }
 
 export async function approveAccessRequest(request, role) {
@@ -134,20 +120,20 @@ export async function approveAccessRequest(request, role) {
     throw new Error('Pending access request not found.');
   }
 
-  console.log('[access_requests] approveAccessRequest', { id, role, email: request.email });
+  console.log('[access_requests] approveAccessRequest', { id: request.id, role, email: request.email });
 
   const reviewedAt = new Date().toISOString();
-  const reviewedBy = await getReviewedBy();
+  const reviewedByUpdate = await getReviewedByFields();
 
   const { data: updatedRequest, error: requestError } = await supabase
     .from('access_requests')
     .update({
       status: 'approved',
       approved_role: role,
-      reviewed_by: reviewedBy,
       reviewed_at: reviewedAt,
+      ...reviewedByUpdate,
     })
-    .eq('id', id)
+    .eq('id', request.id)
     .eq('status', 'pending')
     .select('id, status, approved_role')
     .single();
@@ -181,14 +167,14 @@ export async function rejectAccessRequest(id) {
 
   console.log('[access_requests] rejectAccessRequest', { id });
 
-  const reviewedBy = await getReviewedBy();
+  const reviewedByUpdate = await getReviewedByFields();
 
   const { data: updatedRequest, error } = await supabase
     .from('access_requests')
     .update({
       status: 'rejected',
-      reviewed_by: reviewedBy,
       reviewed_at: new Date().toISOString(),
+      ...reviewedByUpdate,
     })
     .eq('id', id)
     .eq('status', 'pending')
