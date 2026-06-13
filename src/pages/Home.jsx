@@ -213,15 +213,6 @@ function JyotiLamp() {
 
 // ── Main Component ─────────────────────────────────────────────────────────────
 
-const HERO_LAMP_CLASS =
-  "absolute bottom-16 sm:bottom-20 left-4 sm:left-8 lg:left-12 h-96 pointer-events-none select-none flex items-end justify-center";
-const HERO_LAMP_STYLE = { width: "clamp(180px, 25vw, 420px)", maxWidth: "25%", minHeight: "400px" };
-
-const HERO_GHANTI_CLASS =
-  "absolute bottom-16 sm:bottom-20 right-4 sm:right-8 lg:right-12 pointer-events-none select-none relative flex items-end justify-end";
-const HERO_GHANTI_IMAGE_CLASS =
-  "hero-ghanti-blend object-contain object-bottom w-[clamp(180px,28vw,420px)] max-h-[min(70vh,500px)] h-auto";
-
 export default function Home() {
   const [members, setMembers] = useState([]);
   const [stories, setStories] = useState([]);
@@ -290,39 +281,32 @@ export default function Home() {
 
       {/* ── Hero Section ──────────────────────────────────────────────────── */}
       <div
-        className="relative text-center px-4 py-20 overflow-visible min-h-screen flex items-center justify-center"
-        style={{
-          zIndex: 1,
-          background: "#933D52"
-        }}
+        className="relative overflow-hidden min-h-[min(100vh,920px)] flex items-center justify-center px-4 py-12 sm:py-16 lg:py-20"
+        style={{ zIndex: 1, background: "#933D52" }}
       >
-        {/* Burning Nepali Jyoti — left */}
-        <div className={HERO_LAMP_CLASS} style={HERO_LAMP_STYLE}>
-          <JyotiLamp />
-        </div>
+        <div className="hero-grid w-full max-w-6xl mx-auto">
+          {/* Left — diyo (desktop column) */}
+          <div className="hero-side hero-side--lamp hidden lg:flex">
+            <div className="hero-lamp-wrap pointer-events-none select-none">
+              <JyotiLamp />
+            </div>
+          </div>
 
-        {/* Temple ghanti — right */}
-        <div className={HERO_GHANTI_CLASS}>
-          <div className="hero-ghanti-glow" aria-hidden="true" />
-          <img
-            src="/images/ghanti.png"
-            alt="Traditional temple bell"
-            className={HERO_GHANTI_IMAGE_CLASS}
-          />
-        </div>
+          {/* Center — title, shloka, buttons */}
+          <div className="hero-center text-center relative z-10 px-2 sm:px-4">
+            <div
+              className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 hidden sm:flex flex-col items-center justify-center gap-8 pointer-events-none"
+              style={{
+                width: "72px",
+                background: "linear-gradient(to bottom, rgba(80,20,35,0.95), rgba(70,15,30,0.9), rgba(80,20,35,0.95))",
+              }}
+            >
+              <span style={{ fontSize: 22, color: "#C9A24D", opacity: 0.6 }}>ॐ</span>
+              <span style={{ fontSize: 22, color: "#C9A24D", opacity: 0.6 }}>॰</span>
+              <span style={{ fontSize: 22, color: "#C9A24D", opacity: 0.6 }}>ॐ</span>
+            </div>
 
-        {/* Central vertical maroon stripe with ॐ symbols */}
-        <div
-          className="absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 flex flex-col items-center justify-center gap-8"
-          style={{ width: "80px", background: "linear-gradient(to bottom, rgba(80,20,35,0.95), rgba(70,15,30,0.9), rgba(80,20,35,0.95))" }}
-        >
-          <span style={{ fontSize: 24, color: "#C9A24D", opacity: 0.6 }}>ॐ</span>
-          <span style={{ fontSize: 24, color: "#C9A24D", opacity: 0.6 }}>॰</span>
-          <span style={{ fontSize: 24, color: "#C9A24D", opacity: 0.6 }}>ॐ</span>
-        </div>
-
-        {/* Content container */}
-        <div className="relative z-10 max-w-2xl mx-auto px-8">
+            <div className="relative z-10 max-w-2xl mx-auto">
           {/* Decorative top rule */}
           <div className="flex items-center justify-center gap-3 mb-6">
             <div className="h-px flex-1 max-w-[40px]" style={{ background: "linear-gradient(to right, transparent, #C9A24D)" }} />
@@ -419,6 +403,35 @@ export default function Home() {
             >
               Find a Relationship
             </Link>
+          </div>
+            </div>
+          </div>
+
+          {/* Right — mandir ghanti (desktop column) */}
+          <div className="hero-side hero-side--ghanti hidden lg:flex">
+            <div className="hero-ghanti-wrap pointer-events-none select-none">
+              <div className="hero-ghanti-glow" aria-hidden="true" />
+              <img
+                src="/images/mandir-ghanti.png"
+                alt="Mandir ghanti"
+                className="hero-ghanti-blend"
+              />
+            </div>
+          </div>
+
+          {/* Mobile / tablet — images below content */}
+          <div className="hero-mobile-images hidden sm:flex lg:hidden items-end justify-center gap-10 sm:gap-16 pt-2">
+            <div className="hero-lamp-wrap hero-lamp-wrap--mobile pointer-events-none select-none">
+              <JyotiLamp />
+            </div>
+            <div className="hero-ghanti-wrap hero-ghanti-wrap--mobile pointer-events-none select-none">
+              <div className="hero-ghanti-glow" aria-hidden="true" />
+              <img
+                src="/images/mandir-ghanti.png"
+                alt="Mandir ghanti"
+                className="hero-ghanti-blend"
+              />
+            </div>
           </div>
         </div>
       </div>

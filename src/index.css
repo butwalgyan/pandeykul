@@ -103,14 +103,84 @@
 }
 
 @layer components {
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-grid {
+      grid-template-columns: minmax(200px, 1fr) minmax(300px, 520px) minmax(240px, 1fr);
+      gap: 1.25rem 2rem;
+      align-items: end;
+    }
+
+    .hero-mobile-images {
+      display: none !important;
+    }
+  }
+
+  .hero-side {
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 0.5rem;
+  }
+
+  .hero-side--lamp {
+    justify-content: flex-end;
+    padding-right: 0.5rem;
+  }
+
+  .hero-side--ghanti {
+    justify-content: flex-start;
+    padding-left: 0.5rem;
+  }
+
+  .hero-center {
+    order: -1;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-center {
+      order: 0;
+    }
+  }
+
+  .hero-lamp-wrap {
+    width: clamp(220px, 18vw, 300px);
+    aspect-ratio: 200 / 350;
+    max-height: min(52vh, 520px);
+  }
+
+  .hero-lamp-wrap--mobile {
+    width: clamp(160px, 38vw, 220px);
+    max-height: 320px;
+  }
+
+  .hero-ghanti-wrap {
+    position: relative;
+    width: clamp(260px, 20vw, 360px);
+    max-height: min(58vh, 560px);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .hero-ghanti-wrap--mobile {
+    width: clamp(180px, 42vw, 260px);
+    max-height: 340px;
+  }
+
   .hero-ghanti-glow {
     position: absolute;
-    inset: 8% 0 0;
+    inset: 6% 2% 0;
     background: radial-gradient(
       ellipse at 50% 55%,
       rgba(201, 162, 77, 0.22) 0%,
-      rgba(147, 61, 82, 0.08) 45%,
-      transparent 72%
+      rgba(147, 61, 82, 0.1) 48%,
+      transparent 74%
     );
     pointer-events: none;
   }
@@ -118,6 +188,11 @@
   .hero-ghanti-blend {
     position: relative;
     z-index: 1;
+    width: 100%;
+    height: auto;
+    max-height: inherit;
+    object-fit: contain;
+    object-position: bottom center;
     mix-blend-mode: multiply;
     opacity: 0.94;
     -webkit-mask-image: radial-gradient(ellipse 88% 92% at 50% 48%, #000 58%, transparent 100%);
@@ -126,5 +201,9 @@
       drop-shadow(0 0 28px rgba(201, 162, 77, 0.18))
       brightness(1.04)
       contrast(1.06);
+  }
+
+  .hero-mobile-images {
+    grid-column: 1 / -1;
   }
 }
