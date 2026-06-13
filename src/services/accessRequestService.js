@@ -7,21 +7,22 @@ const ALLOWED_ROLES = new Set(['viewer', 'family_editor']);
 
 function pickPayload(data) {
   const result = {};
-  const fields = [
-    'full_name',
-    'nepali_name',
-    'email',
-    'phone_number',
-    'current_address',
-    'father_name',
-    'grandfather_name',
-    'relationship_branch_info',
-    'message_to_admin',
-    'status',
-    'approved_role',
-    'admin_note',
-    'reviewed_by',
-    'reviewed_at',
+ const fields = [
+  'full_name',
+  'nepali_name',
+  'email',
+  'phone_number',
+  'current_address',
+  'father_name',
+  'grandfather_name',
+  'spouse_name',
+  'relationship_branch_info',
+  'message_to_admin',
+  'status',
+  'approved_role',
+  'admin_note',
+  'reviewed_by',
+  'reviewed_at',
   ];
   fields.forEach((key) => {
     const value = data[key];
