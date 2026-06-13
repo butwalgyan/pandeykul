@@ -25,7 +25,9 @@ function LayoutContent({ isAdmin }) {
         </div>
         <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
           {navItems.map(item => {
-            const active = location.pathname === item.path;
+            const active =
+              location.pathname === item.path
+              || (item.path === '/family-tree' && location.pathname === '/tree');
             return (
               <Link
                 key={item.path}

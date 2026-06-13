@@ -61,6 +61,7 @@ export default function AppRoutes() {
 
           <Route element={<ProtectedRoute unauthenticatedElement={null} />}>
             <Route path="/tree" element={<FamilyTree />} />
+            <Route path="/family-tree" element={<FamilyTree />} />
             <Route path="/member/new" element={<AddEditMember />} />
             <Route path="/member/:memberId" element={<MemberProfile />} />
             <Route path="/member/:memberId/edit" element={<AddEditMember />} />

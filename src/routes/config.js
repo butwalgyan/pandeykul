@@ -13,7 +13,7 @@ import {
 
 export const navItems = [
   { path: '/', label: 'Home', np: 'गृहपृष्ठ', icon: Home },
-  { path: '/tree', label: 'Family Tree', np: 'वंश वृक्ष', icon: TreePine },
+  { path: '/family-tree', label: 'Family Tree', np: 'वंश वृक्ष', icon: TreePine },
   { path: '/stories', label: 'Stories', np: 'कथा', icon: BookOpen },
   { path: '/documents', label: 'Documents', np: 'कागजात', icon: FileText },
   { path: '/media', label: 'Photos', np: 'फोटो', icon: Image },
@@ -28,6 +28,7 @@ export const navItems = [
 export const pageNames = {
   '/': 'Home',
   '/tree': 'Family Tree',
+  '/family-tree': 'Family Tree',
   '/stories': 'Stories',
   '/documents': 'Documents',
   '/media': 'Photos & Videos',
