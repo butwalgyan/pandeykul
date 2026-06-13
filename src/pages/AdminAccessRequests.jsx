@@ -5,6 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 
+function getErrorMessage(error) {
+  return error?.message || String(error);
+}
+
 function RequestCard({ request, onApprove, onReject, acting, busy, roleChoice, onRoleChange }) {
   const isActing = acting === request.id;
 
@@ -50,6 +54,7 @@ function RequestCard({ request, onApprove, onReject, acting, busy, roleChoice, o
 
       <div className="flex gap-2">
         <Button
+          type="button"
           size="sm"
           className="gap-1.5 flex-1 bg-green-600 hover:bg-green-700"
           onClick={() => onApprove(request)}
@@ -63,6 +68,7 @@ function RequestCard({ request, onApprove, onReject, acting, busy, roleChoice, o
           Approve
         </Button>
         <Button
+          type="button"
           size="sm"
           variant="outline"
           className="gap-1.5 flex-1 border-red-300 text-red-600 hover:bg-red-50"
@@ -96,6 +102,7 @@ export default function AdminAccessRequests() {
   const [loading, setLoading] = useState(true);
   const [acting, setActing] = useState(null);
   const [roleByRequest, setRoleByRequest] = useState({});
+  const [feedback, setFeedback] = useState(null);
 
   const loadData = useCallback(async () => {
     const [u, pending] = await Promise.all([
@@ -123,15 +130,24 @@ export default function AdminAccessRequests() {
 
   const approveRequest = async (request) => {
     if (acting) return;
+
+    const role = roleByRequest[request.id] || 'viewer';
+    console.log('[AdminAccessRequests] Approve clicked', { id: request.id, role });
+
     setActing(request.id);
+    setFeedback(null);
+
     try {
-      const role = roleByRequest[request.id] || 'viewer';
-      await accessRequestService.approveAccessRequest(request.id, role);
+      await accessRequestService.approveAccessRequest(request, role);
       setRequests(prev => prev.filter(r => r.id !== request.id));
-      toast.success('Access request approved successfully.');
+      const message = 'Access request approved successfully.';
+      setFeedback({ type: 'success', message });
+      toast.success(message);
     } catch (error) {
+      const message = getErrorMessage(error);
       console.error('[AdminAccessRequests] approve failed:', error);
-      toast.error(error.message || 'Unable to approve access request. Please try again.');
+      setFeedback({ type: 'error', message });
+      toast.error(message);
     } finally {
       setActing(null);
     }
@@ -139,14 +155,23 @@ export default function AdminAccessRequests() {
 
   const rejectRequest = async (request) => {
     if (acting) return;
+
+    console.log('[AdminAccessRequests] Reject clicked', { id: request.id });
+
     setActing(request.id);
+    setFeedback(null);
+
     try {
-      await accessRequestService.rejectAccessRequest(request.id, request.admin_note);
+      await accessRequestService.rejectAccessRequest(request.id);
       setRequests(prev => prev.filter(r => r.id !== request.id));
-      toast.success('Access request rejected successfully.');
+      const message = 'Access request rejected successfully.';
+      setFeedback({ type: 'success', message });
+      toast.success(message);
     } catch (error) {
+      const message = getErrorMessage(error);
       console.error('[AdminAccessRequests] reject failed:', error);
-      toast.error(error.message || 'Unable to reject access request. Please try again.');
+      setFeedback({ type: 'error', message });
+      toast.error(message);
     } finally {
       setActing(null);
     }
@@ -183,6 +208,19 @@ export default function AdminAccessRequests() {
           Review new user access requests. Approval sets role to viewer or family editor in user_profiles.
         </p>
       </div>
+
+      {feedback && (
+        <div
+          className={`mb-4 rounded-lg border px-4 py-3 text-sm ${
+            feedback.type === 'error'
+              ? 'border-red-300 bg-red-50 text-red-800'
+              : 'border-green-300 bg-green-50 text-green-800'
+          }`}
+          role="alert"
+        >
+          {feedback.message}
+        </div>
+      )}
 
       {requests.length > 0 && (
         <p className="text-xs text-yellow-700 bg-yellow-100 border border-yellow-200 rounded-full px-3 py-1 inline-flex items-center gap-1 mb-4 font-medium">

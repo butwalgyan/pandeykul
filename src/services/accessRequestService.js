@@ -116,15 +116,25 @@ async function upsertUserProfile(request, role) {
   if (error) throw toServiceError(error, 'Failed to create user profile.');
 }
 
-export async function approveAccessRequest(id, role) {
+export async function approveAccessRequest(request, role) {
   if (!ALLOWED_ROLES.has(role)) {
     throw new Error('Approved role must be viewer or family_editor.');
   }
 
-  const request = await base.get(id);
-  if (!request || request.status !== 'pending') {
+  const id = request?.id;
+  if (!id) {
+    throw new Error('Access request id is required.');
+  }
+
+  if (!request?.email || !request?.full_name) {
+    throw new Error('Access request is missing email or full name.');
+  }
+
+  if (request.status && request.status !== 'pending') {
     throw new Error('Pending access request not found.');
   }
+
+  console.log('[access_requests] approveAccessRequest', { id, role, email: request.email });
 
   const reviewedAt = new Date().toISOString();
   const reviewedBy = await getReviewedBy();
@@ -151,6 +161,8 @@ export async function approveAccessRequest(id, role) {
     throw toServiceError(requestError, 'Failed to approve access request.');
   }
 
+  console.log('[access_requests] approveAccessRequest updated', updatedRequest);
+
   try {
     await upsertUserProfile(request, role);
   } catch (profileError) {
@@ -162,15 +174,19 @@ export async function approveAccessRequest(id, role) {
   return { success: true };
 }
 
-export async function rejectAccessRequest(id, adminNote = null) {
-  const note = adminNote?.trim() || null;
+export async function rejectAccessRequest(id) {
+  if (!id) {
+    throw new Error('Access request id is required.');
+  }
+
+  console.log('[access_requests] rejectAccessRequest', { id });
+
   const reviewedBy = await getReviewedBy();
 
   const { data: updatedRequest, error } = await supabase
     .from('access_requests')
     .update({
       status: 'rejected',
-      admin_note: note,
       reviewed_by: reviewedBy,
       reviewed_at: new Date().toISOString(),
     })
@@ -182,6 +198,8 @@ export async function rejectAccessRequest(id, adminNote = null) {
   if (error || !updatedRequest || updatedRequest.status !== 'rejected') {
     throw toServiceError(error, 'Failed to reject access request.');
   }
+
+  console.log('[access_requests] rejectAccessRequest updated', updatedRequest);
 
   return { success: true };
 }
