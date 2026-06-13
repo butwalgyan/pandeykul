@@ -15,10 +15,8 @@ function RequestCard({ request, onApprove, onReject, acting, busy, roleChoice, o
           <span className="text-[10px] font-semibold uppercase tracking-wider border rounded-full px-2 py-0.5 bg-yellow-100 text-yellow-800 border-yellow-200">
             pending
           </span>
-          <h3 className="font-heading font-semibold text-lg mt-2">{request.full_name}</h3>
-          {request.nepali_name && (
-            <p className="text-sm text-muted-foreground">{request.nepali_name}</p>
-          )}
+          <h3 className="font-heading font-semibold text-lg mt-2">{request.full_name || '—'}</h3>
+          <p className="text-sm text-muted-foreground">{request.nepali_name || '—'}</p>
           <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
             <Clock className="w-3 h-3" />
             {request.created_at ? new Date(request.created_at).toLocaleString() : '—'}
@@ -31,6 +29,7 @@ function RequestCard({ request, onApprove, onReject, acting, busy, roleChoice, o
         <Field label="Phone" value={request.phone_number} />
         <Field label="Current Address" value={request.current_address} className="sm:col-span-2" />
         <Field label="Father's Name" value={request.father_name} />
+        <Field label="SPOUSE NAME" value={request.spouse_name} />
         <Field label="Grandfather's Name" value={request.grandfather_name} />
         <Field label="Relationship / Branch" value={request.relationship_branch_info} className="sm:col-span-2" />
         <Field label="Message to Admin" value={request.message_to_admin} className="sm:col-span-2" />
@@ -38,7 +37,7 @@ function RequestCard({ request, onApprove, onReject, acting, busy, roleChoice, o
 
       <div className="mb-3">
         <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Role on approval</label>
-        <Select value={roleChoice} onValueChange={v => onRoleChange(request.id, v)}>
+        <Select value={roleChoice} onValueChange={v => onRoleChange(request.id, v)} disabled={busy}>
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
@@ -118,10 +117,6 @@ export default function AdminAccessRequests() {
     loadData().finally(() => setLoading(false));
   }, [loadData]);
 
-  const removeFromList = (id) => {
-    setRequests(prev => prev.filter(r => r.id !== id));
-  };
-
   const handleRoleChange = (id, role) => {
     setRoleByRequest(prev => ({ ...prev, [id]: role }));
   };
@@ -131,12 +126,12 @@ export default function AdminAccessRequests() {
     setActing(request.id);
     try {
       const role = roleByRequest[request.id] || 'viewer';
-      await accessRequestService.approveRequest(request, role, user);
-      removeFromList(request.id);
-      toast.success(`Access approved as ${role.replace('_', ' ')}`);
+      await accessRequestService.approveAccessRequest(request.id, role);
+      setRequests(previous => previous.filter(item => item.id !== request.id));
+      toast.success('Access request approved successfully.');
     } catch (error) {
       console.error('[AdminAccessRequests] approve failed:', error);
-      toast.error(error.message || 'Failed to approve access request.');
+      toast.error(error.message || 'Unable to approve access request. Please try again.');
     } finally {
       setActing(null);
     }
@@ -146,12 +141,12 @@ export default function AdminAccessRequests() {
     if (acting) return;
     setActing(request.id);
     try {
-      await accessRequestService.rejectRequest(request, user);
-      removeFromList(request.id);
-      toast.success('Access request rejected');
+      await accessRequestService.rejectAccessRequest(request.id, request.admin_note);
+      setRequests(previous => previous.filter(item => item.id !== request.id));
+      toast.success('Access request rejected successfully.');
     } catch (error) {
       console.error('[AdminAccessRequests] reject failed:', error);
-      toast.error(error.message || 'Failed to reject access request.');
+      toast.error(error.message || 'Unable to reject access request. Please try again.');
     } finally {
       setActing(null);
     }

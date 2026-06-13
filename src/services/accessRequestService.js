@@ -45,6 +45,16 @@ function normalizeFormData(data) {
   };
 }
 
+async function getReviewedBy() {
+  const { data: { user } } = await supabase.auth.getUser();
+  return user?.email || user?.id || null;
+}
+
+function toServiceError(error, fallback) {
+  console.error('[access_requests]', fallback, error);
+  return new Error(error?.message || fallback);
+}
+
 export async function submitAccessRequest(data) {
   const payload = {
     ...pickPayload(normalizeFormData(data)),
@@ -71,37 +81,100 @@ async function upsertUserProfile(request, role) {
   const email = request.email?.trim()?.toLowerCase();
   if (!email) throw new Error('Access request is missing email.');
 
+  const now = new Date().toISOString();
   const profile = {
     email,
     full_name: request.full_name,
     nepali_name: request.nepali_name || null,
     role,
-    updated_at: new Date().toISOString(),
+    access_status: 'approved',
+    approved_at: now,
+    updated_at: now,
   };
 
-  const { data: existing } = await supabase
+  const { data: existing, error: lookupError } = await supabase
     .from('user_profiles')
     .select('id')
     .eq('email', email)
     .maybeSingle();
+
+  if (lookupError) throw toServiceError(lookupError, 'Failed to look up user profile.');
 
   if (existing?.id) {
     const { error } = await supabase
       .from('user_profiles')
       .update(profile)
       .eq('id', existing.id);
-    if (error) throw error;
+    if (error) throw toServiceError(error, 'Failed to update user profile.');
     return existing.id;
   }
 
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('user_profiles')
-    .insert(profile)
-    .select('id')
-    .single();
+    .insert(profile);
 
-  if (error) throw error;
-  return data?.id;
+  if (error) throw toServiceError(error, 'Failed to create user profile.');
+}
+
+export async function approveAccessRequest(id, role) {
+  if (!ALLOWED_ROLES.has(role)) {
+    throw new Error('Approved role must be viewer or family_editor.');
+  }
+
+  const request = await base.get(id);
+  if (!request || request.status !== 'pending') {
+    throw new Error('Pending access request not found.');
+  }
+
+  const reviewedAt = new Date().toISOString();
+  const reviewedBy = await getReviewedBy();
+
+  const { error: requestError } = await supabase
+    .from('access_requests')
+    .update({
+      status: 'approved',
+      approved_role: role,
+      reviewed_by: reviewedBy,
+      reviewed_at: reviewedAt,
+    })
+    .eq('id', id)
+    .eq('status', 'pending');
+
+  if (requestError) {
+    throw toServiceError(requestError, 'Failed to approve access request.');
+  }
+
+  try {
+    await upsertUserProfile(request, role);
+  } catch (profileError) {
+    throw new Error(
+      profileError.message || 'Access request was approved but user profile could not be saved.'
+    );
+  }
+
+  return { success: true };
+}
+
+export async function rejectAccessRequest(id, adminNote = null) {
+  const note = adminNote?.trim() || null;
+  const reviewedBy = await getReviewedBy();
+
+  const { error } = await supabase
+    .from('access_requests')
+    .update({
+      status: 'rejected',
+      admin_note: note,
+      reviewed_by: reviewedBy,
+      reviewed_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+    .eq('status', 'pending');
+
+  if (error) {
+    throw toServiceError(error, 'Failed to reject access request.');
+  }
+
+  return { success: true };
 }
 
 export const accessRequestService = {
@@ -114,44 +187,6 @@ export const accessRequestService = {
   },
 
   submitRequest: submitAccessRequest,
-
-  async approveRequest(request, role, adminUser) {
-    if (!ALLOWED_ROLES.has(role)) {
-      throw new Error('Approved role must be viewer or family_editor.');
-    }
-
-    await upsertUserProfile(request, role);
-
-    const { data, error } = await supabase
-      .from('access_requests')
-      .update({
-        status: 'approved',
-        approved_role: role,
-        reviewed_by: adminUser?.email || adminUser?.id || null,
-        reviewed_at: new Date().toISOString(),
-      })
-      .eq('id', request.id)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
-  },
-
-  async rejectRequest(request, adminUser, adminNote = null) {
-    const { data, error } = await supabase
-      .from('access_requests')
-      .update({
-        status: 'rejected',
-        admin_note: adminNote || null,
-        reviewed_by: adminUser?.email || adminUser?.id || null,
-        reviewed_at: new Date().toISOString(),
-      })
-      .eq('id', request.id)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
-  },
+  approveAccessRequest,
+  rejectAccessRequest,
 };

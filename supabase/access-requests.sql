@@ -36,6 +36,8 @@ CREATE TABLE IF NOT EXISTS user_profiles (
 
 ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS nepali_name text;
 ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS role text;
+ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS access_status text;
+ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS approved_at timestamptz;
 
 ALTER TABLE access_requests ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
