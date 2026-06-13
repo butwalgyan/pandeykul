@@ -38,6 +38,7 @@ export const pageNames = {
   '/relationship-finder': 'Relationship Finder',
   '/kinship-reference': 'Kinship Reference',
   '/admin/approvals': 'Admin Approvals',
+  '/admin/access-requests': 'Access Requests',
   '/admin/pending-approvals': 'Pending Approvals',
   '/admin/access-logs': 'User Access Logs',
 };

@@ -7,6 +7,7 @@ import AuthLoadingScreen from '@/components/common/AuthLoadingScreen';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import PageNotFound from '@/lib/PageNotFound';
 import Login from '@/pages/Login';
+import RequestAccess from '@/pages/RequestAccess';
 import Home from '@/pages/Home';
 import FamilyTree from '@/pages/FamilyTree';
 import MemberProfile from '@/pages/MemberProfile';
@@ -20,6 +21,7 @@ import MapView from '@/pages/MapView';
 import Invitations from '@/pages/Invitations';
 import RelationshipFinderPage from '@/pages/RelationshipFinder';
 import AdminApproval from '@/pages/AdminApproval';
+import AdminAccessRequests from '@/pages/AdminAccessRequests';
 import KinshipReference from '@/pages/KinshipReference';
 import UserAccessLogs from '@/pages/UserAccessLogs';
 import PendingApprovals from '@/pages/PendingApprovals';
@@ -51,6 +53,7 @@ export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/request-access" element={<RequestAccess />} />
 
       <Route element={<Layout />}>
         <Route element={<TrackedApp />}>
@@ -70,6 +73,7 @@ export default function AppRoutes() {
             <Route path="/invitations" element={<Invitations />} />
             <Route path="/relationship-finder" element={<RelationshipFinderPage />} />
             <Route path="/admin/approvals" element={<AdminApproval />} />
+            <Route path="/admin/access-requests" element={<AdminAccessRequests />} />
             <Route path="/admin/pending-approvals" element={<PendingApprovals />} />
             <Route path="/kinship-reference" element={<KinshipReference />} />
           </Route>

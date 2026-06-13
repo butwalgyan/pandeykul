@@ -77,6 +77,13 @@ export default function Login() {
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? 'Signing in...' : 'Sign In'}
           </Button>
+
+          <p className="text-center text-sm text-muted-foreground pt-1">
+            New user?{' '}
+            <Link to="/request-access" className="text-primary font-medium hover:underline">
+              Request Access
+            </Link>
+          </p>
         </form>
 
         <p className="text-center text-sm text-muted-foreground mt-4">

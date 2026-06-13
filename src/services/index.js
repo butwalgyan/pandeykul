@@ -14,6 +14,7 @@ export {
   prepareMembersForTree,
   getSeniorityScore,
 } from '@/services/familyMemberService';
+export { accessRequestService } from '@/services/accessRequestService';
 export const storyService = createEntityService('stories');
 export const mediaService = createEntityService('media');
 export const documentService = createEntityService('documents');
