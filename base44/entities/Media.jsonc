@@ -1,0 +1,38 @@
+{
+  "name": "Media",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "file_url": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "photo",
+        "video"
+      ]
+    },
+    "year": {
+      "type": "number"
+    },
+    "tagged_member_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "string"
+    },
+    "event_name": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "file_url"
+  ]
+}

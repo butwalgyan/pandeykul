@@ -1,0 +1,43 @@
+import {
+  Home,
+  TreePine,
+  BookOpen,
+  FileText,
+  Image,
+  Clock,
+  Search,
+  Map,
+  Mail,
+  HeartHandshake,
+} from 'lucide-react';
+
+export const navItems = [
+  { path: '/', label: 'Home', np: 'गृहपृष्ठ', icon: Home },
+  { path: '/tree', label: 'Family Tree', np: 'वंश वृक्ष', icon: TreePine },
+  { path: '/stories', label: 'Stories', np: 'कथा', icon: BookOpen },
+  { path: '/documents', label: 'Documents', np: 'कागजात', icon: FileText },
+  { path: '/media', label: 'Photos', np: 'फोटो', icon: Image },
+  { path: '/timeline', label: 'Timeline', np: 'समयरेखा', icon: Clock },
+  { path: '/search', label: 'Search', np: 'खोज', icon: Search },
+  { path: '/map', label: 'Map View', np: 'नक्सा', icon: Map },
+  { path: '/invitations', label: 'Invite Members', np: 'निमन्त्रणा', icon: Mail },
+  { path: '/relationship-finder', label: 'Relationship Finder', np: 'नाता खोजी', icon: HeartHandshake },
+  { path: '/kinship-reference', label: 'Kinship Reference', np: 'नाता सन्दर्भ', icon: BookOpen },
+];
+
+export const pageNames = {
+  '/': 'Home',
+  '/tree': 'Family Tree',
+  '/stories': 'Stories',
+  '/documents': 'Documents',
+  '/media': 'Photos & Videos',
+  '/timeline': 'Timeline',
+  '/search': 'Search',
+  '/map': 'Map View',
+  '/invitations': 'Invite Members',
+  '/relationship-finder': 'Relationship Finder',
+  '/kinship-reference': 'Kinship Reference',
+  '/admin/approvals': 'Admin Approvals',
+  '/admin/pending-approvals': 'Pending Approvals',
+  '/admin/access-logs': 'User Access Logs',
+};

@@ -1,0 +1,40 @@
+{
+  "name": "Story",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "childhood",
+        "migration",
+        "tradition",
+        "recipe",
+        "lesson",
+        "wedding",
+        "other"
+      ]
+    },
+    "member_id": {
+      "type": "string"
+    },
+    "tagged_member_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "cover_image": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "content"
+  ]
+}

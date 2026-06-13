@@ -1,0 +1,66 @@
+{
+  "name": "ContentSubmission",
+  "type": "object",
+  "properties": {
+    "submitted_by_email": {
+      "type": "string"
+    },
+    "submitted_by_name": {
+      "type": "string"
+    },
+    "related_family_member_id": {
+      "type": "string"
+    },
+    "submission_type": {
+      "type": "string",
+      "enum": [
+        "add",
+        "edit",
+        "verify"
+      ],
+      "description": "Type of submission"
+    },
+    "field_name": {
+      "type": "string",
+      "description": "Which field is being edited/verified"
+    },
+    "old_value": {
+      "type": "string",
+      "description": "Current value before the change"
+    },
+    "proposed_value": {
+      "type": "string",
+      "description": "New proposed value"
+    },
+    "reason_or_note": {
+      "type": "string",
+      "description": "Reason or note from submitter"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected"
+      ],
+      "default": "pending"
+    },
+    "admin_comment": {
+      "type": "string"
+    },
+    "submitted_at": {
+      "type": "string"
+    },
+    "reviewed_by": {
+      "type": "string"
+    },
+    "reviewed_at": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "submitted_by_email",
+    "submission_type",
+    "related_family_member_id"
+  ]
+}

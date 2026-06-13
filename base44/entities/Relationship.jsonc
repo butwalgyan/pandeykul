@@ -1,0 +1,54 @@
+{
+  "name": "Relationship",
+  "type": "object",
+  "properties": {
+    "person_1_id": {
+      "type": "string",
+      "description": "ID of the first person"
+    },
+    "person_2_id": {
+      "type": "string",
+      "description": "ID of the second person"
+    },
+    "relationship_type": {
+      "type": "string",
+      "enum": [
+        "parent",
+        "child",
+        "spouse",
+        "sibling"
+      ],
+      "description": "Canonical relationship from person_1 to person_2"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "approved",
+        "pending",
+        "rejected"
+      ],
+      "default": "approved",
+      "description": "Only approved relationships are used in the finder"
+    },
+    "submitted_by_id": {
+      "type": "string"
+    },
+    "submitted_by_name": {
+      "type": "string"
+    },
+    "approved_by": {
+      "type": "string"
+    },
+    "approved_at": {
+      "type": "string"
+    },
+    "admin_note": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "person_1_id",
+    "person_2_id",
+    "relationship_type"
+  ]
+}

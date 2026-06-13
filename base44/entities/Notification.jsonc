@@ -1,0 +1,28 @@
+{
+  "name": "Notification",
+  "type": "object",
+  "properties": {
+    "message": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "new_member",
+        "photo_upload",
+        "story_added",
+        "document_added",
+        "update"
+      ]
+    },
+    "related_member_id": {
+      "type": "string"
+    },
+    "is_read": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "message"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "name": "Invitation",
+  "type": "object",
+  "properties": {
+    "email": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "user",
+        "admin"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "accepted"
+      ],
+      "default": "pending"
+    },
+    "message": {
+      "type": "string"
+    },
+    "invited_by": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "email"
+  ]
+}

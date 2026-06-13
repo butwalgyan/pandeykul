@@ -1,0 +1,152 @@
+{
+  "name": "FamilyMember",
+  "type": "object",
+  "properties": {
+    "full_name": {
+      "type": "string"
+    },
+    "nickname": {
+      "type": "string"
+    },
+    "gender": {
+      "type": "string",
+      "enum": [
+        "male",
+        "female",
+        "other"
+      ]
+    },
+    "date_of_birth": {
+      "type": "string"
+    },
+    "date_of_death": {
+      "type": "string"
+    },
+    "marriage_date": {
+      "type": "string",
+      "description": "Wedding anniversary date (YYYY-MM-DD)"
+    },
+    "birthplace": {
+      "type": "string"
+    },
+    "ancestral_village": {
+      "type": "string"
+    },
+    "current_location": {
+      "type": "string"
+    },
+    "blood_group": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "mobile_number": {
+      "type": "string"
+    },
+    "education": {
+      "type": "string"
+    },
+    "occupation": {
+      "type": "string"
+    },
+    "biography": {
+      "type": "string"
+    },
+    "achievements": {
+      "type": "string"
+    },
+    "profile_photo": {
+      "type": "string"
+    },
+    "photos": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "facebook_url": {
+      "type": "string"
+    },
+    "gotra": {
+      "type": "string"
+    },
+    "parent_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "spouse_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "generation": {
+      "type": "number"
+    },
+    "branch": {
+      "type": "string"
+    },
+    "migration_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "place": {
+            "type": "string"
+          },
+          "year": {
+            "type": "number"
+          },
+          "lat": {
+            "type": "number"
+          },
+          "lng": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "owner_email": {
+      "type": "string",
+      "description": "Email of the user who owns/is linked to this record"
+    },
+    "linked_user_email": {
+      "type": "string",
+      "description": "Email of the actual family member if they have an account"
+    },
+    "created_by_email": {
+      "type": "string",
+      "description": "Email of the user who created this record"
+    },
+    "last_updated_by": {
+      "type": "string",
+      "description": "Email of the last user to update this record"
+    },
+    "record_status": {
+      "type": "string",
+      "enum": [
+        "approved",
+        "draft",
+        "pending_review"
+      ],
+      "default": "approved",
+      "description": "Approval status of this record. Only approved records are shown to regular users."
+    },
+    "verified_status": {
+      "type": "string",
+      "enum": [
+        "unverified",
+        "self_verified",
+        "admin_verified"
+      ],
+      "default": "unverified",
+      "description": "How verified this record is"
+    }
+  },
+  "required": [
+    "full_name"
+  ]
+}

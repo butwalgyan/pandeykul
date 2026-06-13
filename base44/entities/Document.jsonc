@@ -1,0 +1,43 @@
+{
+  "name": "Document",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "birth_certificate",
+        "land_paper",
+        "letter",
+        "military_record",
+        "passport",
+        "educational",
+        "other"
+      ]
+    },
+    "file_url": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "member_id": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "year": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "title",
+    "file_url"
+  ]
+}
