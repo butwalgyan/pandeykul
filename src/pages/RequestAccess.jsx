@@ -14,6 +14,7 @@ const INITIAL_FORM = {
   current_address: '',
   father_name: '',
   grandfather_name: '',
+  spouse_name: '',
   relationship_branch_info: '',
   message_to_admin: '',
 };
@@ -116,6 +117,11 @@ export default function RequestAccess() {
           <div>
             <label className="text-sm font-medium mb-1.5 block">Grandfather&apos;s Name</label>
             <Input value={form.grandfather_name} onChange={e => update('grandfather_name', e.target.value)} />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium mb-1.5 block">Spouse Name (if married)</label>
+            <Input value={form.spouse_name} onChange={e => update('spouse_name', e.target.value)} />
           </div>
 
           <div>

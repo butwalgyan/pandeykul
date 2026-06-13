@@ -87,6 +87,7 @@ export const accessRequestService = {
       current_address: formData.current_address?.trim(),
       father_name: formData.father_name?.trim(),
       grandfather_name: formData.grandfather_name?.trim(),
+      spouse_name: formData.spouse_name?.trim(),
       relationship_branch_info: formData.relationship_branch_info?.trim(),
       message_to_admin: formData.message_to_admin?.trim(),
       status: 'pending',
