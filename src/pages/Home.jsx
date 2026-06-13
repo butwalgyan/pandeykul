@@ -137,16 +137,90 @@ function BeelLeaf({ className = "", size = 100, opacity = 0.09 }) {
   );
 }
 
+function JyotiLamp() {
+  return (
+    <>
+      <svg viewBox="0 0 200 350" preserveAspectRatio="xMidYMid meet" className="h-full w-full">
+        <ellipse cx="100" cy="300" rx="50" ry="12" fill="#B8860B" opacity="0.8" />
+        <path d="M 60 300 L 70 280 L 130 280 L 140 300" fill="#D4A520" opacity="0.7" stroke="#8B6914" strokeWidth="1" />
+        <path
+          d="M 70 280 Q 60 270 65 250 Q 70 240 100 235 Q 130 240 135 250 Q 140 270 130 280"
+          fill="#CD853F"
+          stroke="#8B4513"
+          strokeWidth="2"
+          opacity="0.9"
+        />
+        <ellipse cx="100" cy="235" rx="32" ry="8" fill="#D4A574" opacity="0.6" />
+        <ellipse cx="100" cy="260" rx="25" ry="8" fill="#4A3728" opacity="0.7" />
+        <ellipse cx="100" cy="235" rx="8" ry="12" fill="#3A3A3A" />
+        <path
+          d="M 88 220 Q 75 160 88 80 Q 95 40 100 20 Q 105 40 112 80 Q 125 160 112 220 Q 108 232 100 235 Q 92 232 88 220"
+          fill="#FF6347"
+          opacity="0.75"
+          style={{ animation: "jyotiFlame 2.8s ease-in-out infinite", transformOrigin: "100px 230px" }}
+        />
+        <path
+          d="M 92 225 Q 82 170 92 90 Q 97 50 100 25 Q 103 50 108 90 Q 118 170 108 225 Q 105 233 100 235 Q 95 233 92 225"
+          fill="#FF8C00"
+          opacity="0.7"
+          style={{ animation: "jyotiFlame 2.4s ease-in-out infinite 0.2s", transformOrigin: "100px 230px" }}
+        />
+        <path
+          d="M 95 228 Q 88 180 95 100 Q 98 60 100 30 Q 102 60 105 100 Q 112 180 105 228 Q 103 234 100 235 Q 97 234 95 228"
+          fill="#FFD700"
+          opacity="0.65"
+          style={{ animation: "jyotiFlame 2s ease-in-out infinite 0.4s", transformOrigin: "100px 230px" }}
+        />
+        <path
+          d="M 97 232 Q 93 190 97 110 Q 99 70 100 35 Q 101 70 103 110 Q 107 190 103 232 Q 102 234 100 235 Q 98 234 97 232"
+          fill="#FFFF99"
+          opacity="0.6"
+          style={{ animation: "jyotiFlame 1.8s ease-in-out infinite 0.6s", transformOrigin: "100px 230px" }}
+        />
+        <circle
+          cx="100"
+          cy="130"
+          r="65"
+          fill="#FF4500"
+          opacity="0.08"
+          style={{ animation: "jyotiGlow 2.5s ease-in-out infinite" }}
+        />
+        <circle
+          cx="100"
+          cy="130"
+          r="45"
+          fill="#FF8C00"
+          opacity="0.06"
+          style={{ animation: "jyotiGlow 2s ease-in-out infinite 0.3s" }}
+        />
+      </svg>
+      <style>{`
+        @keyframes jyotiFlame {
+          0%, 100% { transform: scaleY(1) scaleX(1); }
+          20% { transform: scaleY(1.08) scaleX(0.92); }
+          40% { transform: scaleY(0.98) scaleX(1.06); }
+          60% { transform: scaleY(1.12) scaleX(0.88); }
+          80% { transform: scaleY(1.02) scaleX(1.04); }
+        }
+        @keyframes jyotiGlow {
+          0%, 100% { opacity: 0.08; }
+          50% { opacity: 0.15; }
+        }
+      `}</style>
+    </>
+  );
+}
+
 // ── Main Component ─────────────────────────────────────────────────────────────
 
-const HERO_BELL_CLASS =
-  "absolute bottom-16 sm:bottom-20 pointer-events-none select-none flex items-end";
-const HERO_BELL_IMAGE_CLASS =
-  "object-contain object-bottom w-[clamp(180px,28vw,420px)] max-h-[min(70vh,500px)] h-auto";
-const HERO_BELL_IMAGE_STYLE = {
-  opacity: 0.9,
-  filter: "drop-shadow(0 10px 24px rgba(0,0,0,0.4)) drop-shadow(0 0 40px rgba(201,162,77,0.15))",
-};
+const HERO_LAMP_CLASS =
+  "absolute bottom-16 sm:bottom-20 left-4 sm:left-8 lg:left-12 h-96 pointer-events-none select-none flex items-end justify-center";
+const HERO_LAMP_STYLE = { width: "clamp(180px, 25vw, 420px)", maxWidth: "25%", minHeight: "400px" };
+
+const HERO_GHANTI_CLASS =
+  "absolute bottom-16 sm:bottom-20 right-4 sm:right-8 lg:right-12 pointer-events-none select-none relative flex items-end justify-end";
+const HERO_GHANTI_IMAGE_CLASS =
+  "hero-ghanti-blend object-contain object-bottom w-[clamp(180px,28vw,420px)] max-h-[min(70vh,500px)] h-auto";
 
 export default function Home() {
   const [members, setMembers] = useState([]);
@@ -222,23 +296,18 @@ export default function Home() {
           background: "#933D52"
         }}
       >
-        {/* Mandir ghanti — left */}
-        <div className={`left-4 sm:left-8 lg:left-12 ${HERO_BELL_CLASS}`}>
-          <img
-            src="/images/mandir-ghanti.png"
-            alt="Mandir ghanti"
-            className={HERO_BELL_IMAGE_CLASS}
-            style={HERO_BELL_IMAGE_STYLE}
-          />
+        {/* Burning Nepali Jyoti — left */}
+        <div className={HERO_LAMP_CLASS} style={HERO_LAMP_STYLE}>
+          <JyotiLamp />
         </div>
 
-        {/* Ornate temple bell (ghanti) — right */}
-        <div className={`right-4 sm:right-8 lg:right-12 ${HERO_BELL_CLASS} justify-end`}>
+        {/* Temple ghanti — right */}
+        <div className={HERO_GHANTI_CLASS}>
+          <div className="hero-ghanti-glow" aria-hidden="true" />
           <img
             src="/images/ghanti.png"
             alt="Traditional temple bell"
-            className={HERO_BELL_IMAGE_CLASS}
-            style={HERO_BELL_IMAGE_STYLE}
+            className={HERO_GHANTI_IMAGE_CLASS}
           />
         </div>
 
