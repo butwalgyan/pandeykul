@@ -6,30 +6,65 @@ const base = createEntityService('access_requests');
 const ALLOWED_ROLES = new Set(['viewer', 'family_editor']);
 
 function pickPayload(data) {
-  const result = {};
- const fields = [
-  'full_name',
-  'nepali_name',
-  'email',
-  'phone_number',
-  'current_address',
-  'father_name',
-  'grandfather_name',
-  'spouse_name',
-  'relationship_branch_info',
-  'message_to_admin',
-  'status',
-  'approved_role',
-  'admin_note',
-  'reviewed_by',
-  'reviewed_at',
+  const fields = [
+    'full_name',
+    'nepali_name',
+    'email',
+    'phone_number',
+    'current_address',
+    'father_name',
+    'grandfather_name',
+    'spouse_name',
+    'relationship_branch_info',
+    'message_to_admin',
   ];
+
+  const result = {};
+
   fields.forEach((key) => {
     const value = data[key];
     if (value === undefined || value === null || value === '') return;
     result[key] = value;
   });
+
   return result;
+}
+
+function normalizeFormData(data) {
+  return {
+    full_name: data.full_name?.trim(),
+    nepali_name: data.nepali_name?.trim(),
+    email: data.email?.trim()?.toLowerCase(),
+    phone_number: data.phone_number?.trim(),
+    current_address: data.current_address?.trim(),
+    father_name: data.father_name?.trim(),
+    grandfather_name: data.grandfather_name?.trim(),
+    spouse_name: data.spouse_name?.trim(),
+    relationship_branch_info: data.relationship_branch_info?.trim(),
+    message_to_admin: data.message_to_admin?.trim(),
+  };
+}
+
+export async function submitAccessRequest(data) {
+  const payload = {
+    ...pickPayload(normalizeFormData(data)),
+    status: 'pending',
+  };
+
+  if (!payload.full_name || !payload.email) {
+    throw new Error('Full name and email are required.');
+  }
+
+  const { error } = await supabase
+    .from('access_requests')
+    .insert([payload]);
+
+  if (error) {
+    console.error('[access_requests] submit failed:', error);
+    throw error;
+  }
+
+  return { success: true };
 }
 
 async function upsertUserProfile(request, role) {
@@ -78,38 +113,7 @@ export const accessRequestService = {
     return base.filter({ status: 'pending' }, '-created_at', limit);
   },
 
-  async submitRequest(formData) {
-    const payload = pickPayload({
-      full_name: formData.full_name?.trim(),
-      nepali_name: formData.nepali_name?.trim(),
-      email: formData.email?.trim()?.toLowerCase(),
-      phone_number: formData.phone_number?.trim(),
-      current_address: formData.current_address?.trim(),
-      father_name: formData.father_name?.trim(),
-      grandfather_name: formData.grandfather_name?.trim(),
-      spouse_name: formData.spouse_name?.trim(),
-      relationship_branch_info: formData.relationship_branch_info?.trim(),
-      message_to_admin: formData.message_to_admin?.trim(),
-      status: 'pending',
-    });
-
-    if (!payload.full_name || !payload.email) {
-      throw new Error('Full name and email are required.');
-    }
-
-    const { data, error } = await supabase
-      .from('access_requests')
-      .insert(payload)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('[access_requests] submit failed:', error);
-      throw error;
-    }
-
-    return data;
-  },
+  submitRequest: submitAccessRequest,
 
   async approveRequest(request, role, adminUser) {
     if (!ALLOWED_ROLES.has(role)) {
